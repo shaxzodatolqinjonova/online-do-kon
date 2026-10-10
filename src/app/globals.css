@@ -249,3 +249,4 @@ a{color:inherit}
 a.chip,a.cat,a.link,a.soc,a.icon-btn{text-decoration:none}
 a.chip{display:inline-block}
 a.cat{color:inherit}
+.fgrid{align-items:start}
