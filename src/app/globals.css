@@ -100,7 +100,7 @@ section.block{margin-top:64px}
 .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;flex:1;min-width:0}
 .chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:.9rem;white-space:nowrap}
-.chip[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:var(--on-rose)}
+.chip[aria-pressed="true"],.chip[aria-current="true"]{background:var(--rose);border-color:var(--rose);color:var(--on-rose)}
 select{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700}
 .empty{grid-column:1/-1;text-align:center;padding:40px;background:var(--blush);border-radius:26px;color:var(--muted)}
 .empty a{color:var(--rose)}

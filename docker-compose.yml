@@ -1,0 +1,15 @@
+# Kompyuterda baza kerak boʻlsa (Docker oʻrnatilgan boʻlsa):  docker compose up -d
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: miyov
+      POSTGRES_PASSWORD: miyov_dev
+      POSTGRES_DB: miyov
+    ports:
+      - "5432:5432"
+    volumes:
+      - miyov-db:/var/lib/postgresql/data
+volumes:
+  miyov-db:

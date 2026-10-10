@@ -10,7 +10,8 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
-    "admin:setup": "node scripts/admin-setup.mjs"
+    "admin:setup": "node scripts/admin-setup.mjs",
+    "setup": "prisma db push && prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -36,5 +37,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

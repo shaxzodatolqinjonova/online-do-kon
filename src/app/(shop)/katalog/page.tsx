@@ -10,12 +10,14 @@ import { SortSelect } from "@/components/SortSelect";
 type Props = { searchParams: Promise<{ q?: string; kategoriya?: string; saralash?: string }> };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { kategoriya } = await searchParams;
+  const { kategoriya, q, saralash } = await searchParams;
   const cat = kategoriya ? await prisma.category.findUnique({ where: { slug: kategoriya } }) : null;
   return {
     title: cat ? cat.name : "Barcha mahsulotlar",
     description: cat ? `${cat.name}: mushukchalar uchun sifatli mahsulotlar. Butun Oʻzbekiston boʻylab yetkazib berish.` : "Mushukchalar uchun taom, dori, aksessuar, kiyimcha va parvarish vositalari katalogi.",
     alternates: { canonical: cat ? `/katalog?kategoriya=${cat.slug}` : "/katalog" },
+    // qidiruv natijalari va saralash variantlari Google'ga takroriy sahifa boʻlib koʻrinmasin
+    ...(q || saralash ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -59,9 +61,9 @@ export default async function Katalog({ searchParams }: Props) {
         {active?.slug === "dorilar" && <p className="notice-warn">⚕️ {settings.drugNote}</p>}
         <div className="tools">
           <div className="chips" role="group" aria-label="Kategoriya boʻyicha saralash">
-            <Link className="chip" href={href()} aria-pressed={!active}>Hammasi</Link>
+            <Link className="chip" href={href()} aria-current={!active}>Hammasi</Link>
             {cats.map((c) => (
-              <Link key={c.id} className="chip" href={href(c.slug)} aria-pressed={active?.id === c.id}>{c.name}</Link>
+              <Link key={c.id} className="chip" href={href(c.slug)} aria-current={active?.id === c.id}>{c.name}</Link>
             ))}
           </div>
           <Suspense fallback={null}>

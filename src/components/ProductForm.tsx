@@ -40,7 +40,7 @@ export async function ProductForm({ p }: { p?: P }) {
             </div>
           )}
           <input type="file" name="images" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
-          <small className="note">JPG, PNG, WEBP yoki GIF, har biri 5 MB gacha. Bir nechta rasm tanlash mumkin; birinchisi asosiy rasm boʻladi.</small>
+          <small className="note">JPG, PNG, WEBP yoki GIF, har biri 5 MB gacha. Birinchisi asosiy rasm boʻladi. Internetdagi saytda bir saqlashda jami taxminan 4 MB dan oshmasin, kattalarini bittadan yuklang.</small>
         </div>
         {p && <input type="hidden" name="productId" value={p.id} />}
         <label className="check"><input type="checkbox" name="active" defaultChecked={p ? p.active : true} /> Saytda koʻrsatilsin</label>

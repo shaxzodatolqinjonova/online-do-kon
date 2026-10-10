@@ -34,7 +34,8 @@ export async function setOrderStatus(f: FormData) {
   await requireAdmin();
   const id = str(f, "id");
   const status = z.enum(STATUSES).parse(str(f, "status"));
-  const to = str(f, "back") || "/admin";
+  const rawBack = str(f, "back");
+  const to = /^\/admin(\?[\w=&%-]*)?$/.test(rawBack) ? rawBack : "/admin"; // boshqa saytga yoʻnaltirib boʻlmaydi
   const order = await prisma.order.findUnique({ where: { id }, include: { items: true } });
   if (!order) return back(to, "xato", "Buyurtma topilmadi.");
   if (order.status === status) return back(to, "ok", "Holat oʻzgarmadi.");
