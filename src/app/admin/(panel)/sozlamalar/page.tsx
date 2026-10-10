@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
 import { Flash } from "@/components/Flash";
 import { saveSettings } from "../../actions";
+import { configured } from "@/lib/payments/config";
 
 export const metadata: Metadata = { title: "Sozlamalar" };
 
@@ -39,11 +40,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
       <h2 className="sub">Toʻlov usullari</h2>
       <div className="box checks">
-        <label className="check"><input type="checkbox" name="payClick" defaultChecked={s.payClick} /> Click</label>
-        <label className="check"><input type="checkbox" name="payPayme" defaultChecked={s.payPayme} /> Payme</label>
-        <label className="check"><input type="checkbox" name="payUzum" defaultChecked={s.payUzum} /> Uzum</label>
+        <label className="check"><input type="checkbox" name="payClick" defaultChecked={s.payClick} /> Click <small className="note">({configured.CLICK() ? "ulangan" : "kalit kiritilmagan"})</small></label>
+        <label className="check"><input type="checkbox" name="payPayme" defaultChecked={s.payPayme} /> Payme <small className="note">({configured.PAYME() ? "ulangan" : "kalit kiritilmagan"})</small></label>
+        <label className="check"><input type="checkbox" name="payUzum" defaultChecked={s.payUzum} /> Uzum <small className="note">(hali ulanmagan)</small></label>
         <label className="check"><input type="checkbox" name="payCash" defaultChecked={s.payCash} /> Naqd (olganda)</label>
       </div>
+      <p className="note">Onlayn usul mijozga faqat ikki shart bajarilsa koʻrinadi: bu yerda yoqilgan va kalitlari serverning .env fayliga kiritilgan.</p>
 
       <h2 className="sub">Aloqa</h2>
       <p className="note">Toʻliq havola kiriting, masalan https://t.me/miyovuz. Boʻsh qoldirilgani saytda koʻrinmaydi.</p>

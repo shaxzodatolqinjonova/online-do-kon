@@ -5,6 +5,7 @@ import { cardSelect, getCategories, toCard, visibleWhere } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { HeartSticker, PawSticker } from "@/components/Stickers";
 import { som } from "@/lib/format";
+import { availableMethods } from "@/lib/payments/config";
 
 export default async function Home() {
   const [s, cats, best, articles] = await Promise.all([
@@ -17,7 +18,8 @@ export default async function Home() {
     { e: s.offer1Emoji, t: s.offer1Title, d: s.offer1Text },
     { e: s.offer2Emoji, t: s.offer2Title, d: s.offer2Text },
   ].filter((o) => o.t);
-  const pays = [s.payClick && "Click", s.payPayme && "Payme", s.payUzum && "Uzum", s.payCash && "Naqd (olganda)"].filter(Boolean).join(", ");
+  const av = availableMethods(s);
+  const pays = [av.CLICK && "Click", av.PAYME && "Payme", av.UZUM && "Uzum", av.CASH && "Naqd (olganda)"].filter(Boolean).join(", ");
 
   return (
     <div className="wrap">

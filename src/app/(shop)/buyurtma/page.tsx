@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
 import { CheckoutForm } from "@/components/CheckoutForm";
+import { availableMethods } from "@/lib/payments/config";
 
 export const metadata: Metadata = { title: "Buyurtmani rasmiylashtirish", robots: { index: false } };
 
@@ -9,7 +10,7 @@ export default async function CheckoutPage() {
   return (
     <div className="wrap">
       <h1 className="page-title">Buyurtmani rasmiylashtirish</h1>
-      <CheckoutForm pays={{ CLICK: s.payClick, PAYME: s.payPayme, UZUM: s.payUzum, CASH: s.payCash }} />
+      <CheckoutForm pays={availableMethods(s)} />
     </div>
   );
 }
