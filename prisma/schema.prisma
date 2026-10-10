@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  emoji    String    @default("🐾")
+  position Int       @default(0)
+  active   Boolean   @default(true)
+  products Product[]
+}
+
+model Product {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  name        String
+  description String         @default("")
+  price       Int // so'mda, butun son
+  oldPrice    Int            @default(0)
+  stock       Int            @default(0)
+  sold        Int            @default(0)
+  emoji       String         @default("🐾")
+  active      Boolean        @default(true)
+  categoryId  String
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  reviews     Review[]
+  items       OrderItem[]
+  createdAt   DateTime       @default(now())
+
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  position  Int     @default(0)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  name      String
+  rating    Int
+  text      String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, approved])
+}
+
+model Promo {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  percent   Int
+  minTotal  Int       @default(0)
+  expiresAt DateTime?
+  active    Boolean   @default(true)
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  body      String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CLICK
+  PAYME
+  UZUM
+  CASH
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  number        Int           @unique @default(autoincrement())
+  name          String
+  phone         String
+  region        String
+  address       String
+  note          String        @default("")
+  subtotal      Int
+  discount      Int           @default(0)
+  promoCode     String?
+  shipping      Int
+  total         Int
+  status        OrderStatus   @default(NEW)
+  method        PaymentMethod
+  paymentStatus PaymentStatus @default(UNPAID)
+  items         OrderItem[]
+  payments      Payment[]
+  createdAt     DateTime      @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name      String // buyurtma paytidagi nusxa
+  price     Int // buyurtma paytidagi narx
+  quantity  Int
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider   String
+  externalId String?
+  amount     Int
+  state      String   @default("created")
+  raw        Json?
+  createdAt  DateTime @default(now())
+}
+
+// Bitta qator: sayt sozlamalari (admin paneldan o'zgartiriladi)
+model Setting {
+  id             Int     @id @default(1)
+  shopName       String  @default("miyov.uz")
+  tagline        String  @default("")
+  freeFrom       Int     @default(300000)
+  shippingFee    Int     @default(25000)
+  timeCity       String  @default("1 kun")
+  timeRegion     String  @default("2–4 kun")
+  payClick       Boolean @default(true)
+  payPayme       Boolean @default(true)
+  payUzum        Boolean @default(true)
+  payCash        Boolean @default(true)
+  telegram       String  @default("")
+  instagram      String  @default("")
+  whatsapp       String  @default("")
+  phone          String  @default("")
+  drugNote       String  @default("Veterinar maslahati bilan qoʻllang.")
+  offer1Emoji    String  @default("🎁")
+  offer1Title    String  @default("")
+  offer1Text     String  @default("")
+  offer2Emoji    String  @default("🚚")
+  offer2Title    String  @default("")
+  offer2Text     String  @default("")
+}
+
+// Spamdan himoya: IP bo'yicha so'rovlar hisobi
+model RateLimit {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+}
