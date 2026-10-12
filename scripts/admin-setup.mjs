@@ -3,7 +3,7 @@
 import { scryptSync, randomBytes } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
-const password = process.argv[2];
+const password = process.argv[2] ?? process.env.ADMIN_PASSWORD; // serverda parol buyruq satriga yozilmasligi uchun muhit oʻzgaruvchisi ham qabul qilinadi
 if (!password || password.length < 8) {
   console.error('Parol kamida 8 belgi boʻlsin. Misol: npm run admin:setup -- "meningParolim2026"');
   process.exit(1);

@@ -19,7 +19,7 @@ promokodlar, sharhlar, parol bilan himoyalangan admin panel, Telegram xabari va 
 8. [Hozircha yoʻq narsalar va bilishingiz kerak boʻlganlar](#8-hozircha-yoʻq-narsalar-va-bilishingiz-kerak-boʻlganlar)
 9. [Loyiha tuzilishi va foydali buyruqlar](#9-loyiha-tuzilishi-va-foydali-buyruqlar)
 
-Qoʻshimcha qoʻllanma: **[Telegram bot va toʻlov tizimlarini ulash](docs/TOLOV-VA-TELEGRAM.md)**.
+Qoʻshimcha qoʻllanmalar: **[Telegram bot va toʻlov tizimlarini ulash](docs/TOLOV-VA-TELEGRAM.md)** va **[VPS serverga joylash](docs/VPS-JOYLASH.md)**.
 
 ---
 
@@ -116,6 +116,9 @@ Admin panelda yuklangan rasmlar loyiha ichidagi `uploads` papkaga yoziladi.
 ---
 
 ## 3. Internetga (serverga) joylash: Vercel + Neon
+
+> **Oʻz VPS serveringiz boʻlsa** (Vercel kerak emas): **[docs/VPS-JOYLASH.md](docs/VPS-JOYLASH.md)** — tayyor skript
+> bilan Node.js, baza, nginx, HTTPS va zaxira nusxani avtomatik sozlaydi. Quyida Vercel yoʻli.
 
 **Reja:** kod GitHub'da turadi → **Neon** (bepul bulutdagi PostgreSQL) maʼlumotlarni saqlaydi →
 **Vercel** saytni internetda koʻrsatadi. Rasmlar uchun **Vercel Blob** ishlatiladi.
