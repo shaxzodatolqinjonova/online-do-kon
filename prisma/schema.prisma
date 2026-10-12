@@ -96,6 +96,7 @@ enum PaymentStatus {
   UNPAID
   PAID
   FAILED
+  REFUNDED
 }
 
 model Order {
@@ -130,16 +131,24 @@ model OrderItem {
   quantity  Int
 }
 
+// Toʻlov tizimi tranzaksiyasi (Payme yoki Click)
 model Payment {
-  id         String   @id @default(cuid())
-  orderId    String
-  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  provider   String
-  externalId String?
-  amount     Int
-  state      String   @default("created")
-  raw        Json?
-  createdAt  DateTime @default(now())
+  id            String   @id @default(cuid())
+  seq           Int      @unique @default(autoincrement()) // Click: merchant_prepare_id
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider      String // "payme" | "click"
+  externalId    String // Payme: tranzaksiya id; Click: click_trans_id
+  amount        Int // soʻmda
+  state         Int      @default(1) // 1 yaratildi, 2 toʻlandi, -1 bekor, -2 toʻlangandan keyin bekor
+  reason        Int?
+  providerTime  BigInt? // Payme "time" (ms)
+  createdAtMs   BigInt
+  performedAtMs BigInt?
+  cancelledAtMs BigInt?
+
+  @@unique([provider, externalId])
+  @@index([orderId])
 }
 
 // Bitta qator: sayt sozlamalari (admin paneldan o'zgartiriladi)

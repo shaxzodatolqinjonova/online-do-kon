@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito } from "next/font/google";
 import "./globals.css";
-import { ShopProvider } from "@/components/ShopProvider";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { SvgDefs } from "@/components/Stickers";
 import { getSettings } from "@/lib/settings";
 
@@ -29,8 +26,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, view
 // Sahifa yuklanishidan oldin tanlangan rejimni qo'yadi (miltillashning oldini oladi)
 const themeScript = `try{var t=localStorage.getItem("miyov-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}`;
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const s = await getSettings();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="uz" className={`${fredoka.variable} ${nunito.variable}`} suppressHydrationWarning>
       <head>
@@ -38,11 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <SvgDefs />
-        <ShopProvider>
-          <Header name={s.shopName} />
-          <main>{children}</main>
-          <Footer />
-        </ShopProvider>
+        {children}
       </body>
     </html>
   );

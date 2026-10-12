@@ -56,6 +56,12 @@ export function CheckoutForm({ pays }: { pays: Pay }) {
     setBusy(false);
     const data = await r?.json().catch(() => null);
     if (r?.ok && data) {
+      if (data.payUrl) {
+        // onlayn toʻlov: savatni tozalab, toʻlov sahifasiga oʻtamiz
+        clearCart();
+        window.location.href = data.payUrl;
+        return;
+      }
       setDone({ number: data.number, total: data.total, method, phone: String(f.get("phone")) });
       clearCart();
     } else setErr(data?.error ?? "Buyurtmani yuborib boʻlmadi. Internetni tekshirib, qayta urinib koʻring.");

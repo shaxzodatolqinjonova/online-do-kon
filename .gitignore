@@ -44,5 +44,4 @@ next-env.d.ts
 !.env.example
 
 # yuklangan rasmlar (kompyuterda)
-/public/uploads/*
-!/public/uploads/.gitkeep
+/uploads/

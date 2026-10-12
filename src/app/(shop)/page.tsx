@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSettings } from "@/lib/settings";
@@ -5,6 +6,9 @@ import { cardSelect, getCategories, toCard, visibleWhere } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { HeartSticker, PawSticker } from "@/components/Stickers";
 import { som } from "@/lib/format";
+import { availableMethods } from "@/lib/payments/config";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default async function Home() {
   const [s, cats, best, articles] = await Promise.all([
@@ -17,10 +21,21 @@ export default async function Home() {
     { e: s.offer1Emoji, t: s.offer1Title, d: s.offer1Text },
     { e: s.offer2Emoji, t: s.offer2Title, d: s.offer2Text },
   ].filter((o) => o.t);
-  const pays = [s.payClick && "Click", s.payPayme && "Payme", s.payUzum && "Uzum", s.payCash && "Naqd (olganda)"].filter(Boolean).join(", ");
+  const av = availableMethods(s);
+  const pays = [av.CLICK && "Click", av.PAYME && "Payme", av.UZUM && "Uzum", av.CASH && "Naqd (olganda)"].filter(Boolean).join(", ");
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const jsonLd = [
+    { "@context": "https://schema.org", "@type": "Organization", name: s.shopName, url: site, ...(s.phone ? { telephone: s.phone } : {}) },
+    {
+      "@context": "https://schema.org", "@type": "WebSite", name: s.shopName, url: site,
+      potentialAction: { "@type": "SearchAction", target: `${site}/katalog?q={search_term_string}`, "query-input": "required name=search_term_string" },
+    },
+  ];
 
   return (
     <div className="wrap">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <section className="hero">
         <div className="logo-big">
           <PawSticker />

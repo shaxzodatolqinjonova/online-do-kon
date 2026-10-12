@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { quoteCart } from "@/lib/pricing";
@@ -6,6 +6,8 @@ import { getSettings } from "@/lib/settings";
 import { normalizePhone } from "@/lib/phone";
 import { REGIONS } from "@/lib/format";
 import { allow, clientIp } from "@/lib/ratelimit";
+import { availableMethods, payUrl } from "@/lib/payments/config";
+import { notifyNewOrder } from "@/lib/telegram";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ismingizni kiriting.").max(80),
@@ -34,8 +36,8 @@ export async function POST(req: Request) {
   if (!phone) return fail("Telefon raqamini +998 90 123 45 67 koʻrinishida kiriting.");
 
   const settings = await getSettings();
-  const enabled = { CLICK: settings.payClick, PAYME: settings.payPayme, UZUM: settings.payUzum, CASH: settings.payCash };
-  if (!enabled[data.method]) return fail("Bu toʻlov usuli hozir mavjud emas.");
+  // admin yoqqan va kalitlari .env da toʻldirilgan usullargina ishlaydi
+  if (!availableMethods(settings)[data.method]) return fail("Bu toʻlov usuli hozir mavjud emas.");
 
   const quote = await quoteCart(data.items, data.promo);
   if (quote.lines.length === 0) return fail("Savatdagi mahsulotlar omborda qolmagan.");
@@ -68,7 +70,8 @@ export async function POST(req: Request) {
         },
       });
     });
-    return NextResponse.json({ number: order.number, total: order.total, method: order.method });
+    after(() => notifyNewOrder(order.id));
+    return NextResponse.json({ number: order.number, total: order.total, method: order.method, payUrl: payUrl(order), orderId: order.id });
   } catch (e) {
     if (e instanceof Error && e.message.startsWith("STOCK:")) return fail(`«${e.message.slice(6)}» omborda yetarli emas. Savatni yangilang.`, 409);
     console.error(e);
